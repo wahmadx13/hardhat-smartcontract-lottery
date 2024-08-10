@@ -8,6 +8,9 @@ contract Raffle {
   uint256 private immutable i_enterenceFee;
   address payable[] private s_players;
 
+  /* Events */
+  event RaffleEnter(address indexed palyer);
+
   constructor(uint256 entrenceFee) {
     i_enterenceFee = entrenceFee;
   }
@@ -17,6 +20,7 @@ contract Raffle {
       revert Raffle__NotEnoughETHEntered();
     }
     s_players.push(payable(msg.sender));
+    emit RaffleEnter(msg.sender);
   }
 
   function getEnterenceFee() public view returns (uint256) {
