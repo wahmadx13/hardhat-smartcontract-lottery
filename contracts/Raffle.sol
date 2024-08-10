@@ -16,6 +16,7 @@ contract Raffle {
     if (msg.value < i_enterenceFee) {
       revert Raffle__NotEnoughETHEntered();
     }
+    s_players.push(payable(msg.sender));
   }
 
   function getEnterenceFee() public view returns (uint256) {
