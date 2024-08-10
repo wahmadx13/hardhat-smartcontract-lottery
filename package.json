@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "solhint": "yarn solhint contracts/*.sol"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-etherscan": "^3.1.8",
