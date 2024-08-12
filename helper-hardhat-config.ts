@@ -1,6 +1,7 @@
 export interface networkConfigItem {
   ethUsdPriceFeed?: string
   blockConfirmations?: number
+  vrfCoordinatorV2?: string
 }
 
 export interface networkConfigInfo {
