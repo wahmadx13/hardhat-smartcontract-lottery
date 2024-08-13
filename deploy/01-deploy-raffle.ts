@@ -6,6 +6,7 @@ import {
   networkConfig,
   VERIFICATION_BLOCK_CONFIRMATIONS,
 } from "../helper-hardhat-config"
+import verify from "../utils/verify"
 
 const VRF_SUB_FUND_AMOUNT = ethers.parseEther("30")
 
@@ -27,7 +28,7 @@ const deployRaffle: DeployFunction = async function ({
     const vrfCoordinatorInstance = await ethers.getContractAt("VRFCoordinatorV2Mock", signer)
     const transactionResponse = await vrfCoordinatorInstance.createSubscription()
     const transactionReceipt = await transactionResponse.wait()
-    subscriptionId = transactionReceipt!.logs[0].topics[1]
+    subscriptionId = transactionReceipt!.logs[0]?.topics[1]
     await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, VRF_SUB_FUND_AMOUNT)
   } else {
     vrfCoordinatorV2Address = networkConfig[chainId!]["vrfCoordinatorV2"]
@@ -52,6 +53,12 @@ const deployRaffle: DeployFunction = async function ({
     args: args,
     waitConfirmations: waitBlockConfirmations,
   })
+
+  if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+    log("Verifying ...")
+    await verify(raffle.address, args)
+  }
+  log("===============================")
 }
 
 export default deployRaffle

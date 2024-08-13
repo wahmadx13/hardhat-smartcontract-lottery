@@ -3,7 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import { developmentChains } from "../helper-hardhat-config"
 
-const BASE_FEE = 250000000000000000
+const BASE_FEE = ethers.parseEther("0.25")
 const GAS_PRICE_LINK = 1e9
 
 const deployMocks: DeployFunction = async function ({
