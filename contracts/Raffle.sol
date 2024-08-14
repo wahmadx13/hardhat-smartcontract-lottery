@@ -18,7 +18,7 @@ abstract contract Raffle is VRFConsumerBaseV2 {
   }
 
   /* State Variables */
-  uint256 private immutable i_enterenceFee;
+  uint256 private immutable i_entarnceFee;
   address payable[] private s_players;
   VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
   bytes32 private immutable i_gasLane;
@@ -47,7 +47,7 @@ abstract contract Raffle is VRFConsumerBaseV2 {
     uint32 callbackGasLimit,
     uint256 interval
   ) VRFConsumerBaseV2(vrfCoordinatorV2) {
-    i_enterenceFee = entrenceFee;
+    i_entarnceFee = entrenceFee;
     i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
     i_gasLane = gasLane;
     i_subscriptionId = subscriptionId;
@@ -58,7 +58,7 @@ abstract contract Raffle is VRFConsumerBaseV2 {
   }
 
   function enterRaffle() public payable {
-    if (msg.value < i_enterenceFee) {
+    if (msg.value < i_entarnceFee) {
       revert Raffle__NotEnoughETHEntered();
     }
     if (s_raffleState != RaffleState.OPEN) {
@@ -124,18 +124,6 @@ abstract contract Raffle is VRFConsumerBaseV2 {
   }
 
   /* View / Pure Functions */
-  function getEnterenceFee() public view returns (uint256) {
-    return i_enterenceFee;
-  }
-
-  function getPlayer(uint256 index) public view returns (address) {
-    return s_players[index];
-  }
-
-  function getRecentWinner() public view returns (address) {
-    return s_recentWinner;
-  }
-
   function getRaffleState() public view returns (RaffleState) {
     return s_raffleState;
   }
@@ -144,15 +132,31 @@ abstract contract Raffle is VRFConsumerBaseV2 {
     return NUM_WORDS;
   }
 
-  function getNumberOfPlayers() public view returns (uint256) {
-    return s_players.length;
+  function getRequestConfirmations() public pure returns (uint256) {
+    return REQUEST_CONFIRMATIONS;
   }
 
-  function getLatestTimeStamp() public view returns (uint256) {
+  function getRecentWinner() public view returns (address) {
+    return s_recentWinner;
+  }
+
+  function getPlayer(uint256 index) public view returns (address) {
+    return s_players[index];
+  }
+
+  function getLastTimeStamp() public view returns (uint256) {
     return s_lastTimestamp;
   }
 
-  function getRequestConfirmations() public pure returns (uint256) {
-    return REQUEST_CONFIRMATIONS;
+  function getInterval() public view returns (uint256) {
+    return i_interval;
+  }
+
+  function getEntranceFee() public view returns (uint256) {
+    return i_entarnceFee;
+  }
+
+  function getNumberOfPlayers() public view returns (uint256) {
+    return s_players.length;
   }
 }

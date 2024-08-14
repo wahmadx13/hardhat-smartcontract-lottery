@@ -25,11 +25,23 @@ const deployRaffle: DeployFunction = async function ({
     const signer = await ethers.getSigner(deployer)
     vrfCoordinatorV2Mock = await deployments.get("VRFCoordinatorV2Mock")
     vrfCoordinatorV2Address = vrfCoordinatorV2Mock.address
-    const vrfCoordinatorInstance = await ethers.getContractAt("VRFCoordinatorV2Mock", signer)
+
+    // Properly initialize the contract instance
+    const vrfCoordinatorInstance = await ethers.getContractAt(
+      "VRFCoordinatorV2Mock",
+      vrfCoordinatorV2Mock.address,
+      signer,
+    )
+
+    // Create subscription
     const transactionResponse = await vrfCoordinatorInstance.createSubscription()
-    const transactionReceipt = await transactionResponse.wait()
-    subscriptionId = transactionReceipt!.logs[0]?.topics[1]
-    await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, VRF_SUB_FUND_AMOUNT)
+    const transactionReceipt = await transactionResponse.wait(1)
+    subscriptionId = BigInt(transactionReceipt!.logs[0].topics[1]).toString()
+
+    console.log("SubscriptionId", subscriptionId)
+
+    // Fund the subscription using the contract instance
+    await vrfCoordinatorInstance.fundSubscription(subscriptionId, VRF_SUB_FUND_AMOUNT)
   } else {
     vrfCoordinatorV2Address = networkConfig[chainId!]["vrfCoordinatorV2"]
     subscriptionId = networkConfig[chainId!]["subscriptionId"]
@@ -41,11 +53,11 @@ const deployRaffle: DeployFunction = async function ({
 
   const args: any = [
     vrfCoordinatorV2Address,
-    subscriptionId,
-    networkConfig[network.config.chainId!]["gasLane"],
-    networkConfig[network.config.chainId!]["keepersUpdateInterval"],
     networkConfig[network.config.chainId!]["raffleEntranceFee"],
+    networkConfig[network.config.chainId!]["gasLane"],
+    subscriptionId,
     networkConfig[network.config.chainId!]["callbackGasLimit"],
+    networkConfig[network.config.chainId!]["keepersUpdateInterval"],
   ]
   const raffle = await deploy("Raffle", {
     from: deployer,
